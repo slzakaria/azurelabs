@@ -109,8 +109,10 @@ jobs:
         env:
           CICD_TOKEN: ${{ secrets.CICD_TOKEN }}
         run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
           git tag latest
-          git push origin latest
+          git push https://x-access-token:${{ secrets.CICD_TOKEN }}@github.com/slzakaria/azurelabs.git latest
 
   release:
     runs-on: ubuntu-latest
