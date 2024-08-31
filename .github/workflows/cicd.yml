@@ -107,12 +107,12 @@ jobs:
 
       - name: Tag commit as latest
         env:
-          CICD_TOKEN: ${{ secrets.CICD_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "GitHub Actions"
           git config user.email "github-actions@github.com"
           git tag latest
-          git push https://x-access-token:${{ secrets.CICD_TOKEN }}@github.com/slzakaria/azurelabs.git latest
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/slzakaria/azurelabs.git latest
 
   release:
     runs-on: ubuntu-latest
