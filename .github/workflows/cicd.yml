@@ -60,7 +60,7 @@ jobs:
 
   docker-push:
     runs-on: ubuntu-latest
-    needs: [build-test]
+    needs: build-test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -98,9 +98,23 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  release:
+  tag:
     runs-on: ubuntu-latest
     needs: build-test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Tag commit as latest
+        env:
+          CICD_TOKEN: ${{ secrets.CICD_TOKEN }}
+        run: |
+          git tag latest
+          git push origin latest
+
+  release:
+    runs-on: ubuntu-latest
+    needs: tag
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -120,17 +134,3 @@ jobs:
           files: ./bin/goapi
         env:
           CICD_TOKEN: ${{ secrets.CICD_TOKEN }}
-
-  tag:
-    runs-on: ubuntu-latest
-    needs: release
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Tag commit as latest
-        env:
-          CICD_TOKEN: ${{ secrets.CICD_TOKEN }}
-        run: |
-          git tag latest
-          git push origin latest
