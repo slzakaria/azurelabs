@@ -1,8 +1,7 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -40,34 +39,33 @@ func (lrw *logResponseWriter) WriteHeader(code int) {
 	lrw.ResponseWriter.WriteHeader(code)
 }
 
+func getPhotosHandler(w http.ResponseWriter, r *http.Request) {
+	resp, err := http.Get("https://jsonplaceholder.typicode.com/photos")
+	if err != nil {
+		http.Error(w, "Failed to fetch photos", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, "Failed to fetch photos", http.StatusInternalServerError)
+		return
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Failed to read response body", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := w.Write(body); err != nil {
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+		return
+	}
+}
+
 func main() {
-	http.HandleFunc("/photos", func(w http.ResponseWriter, r *http.Request) {
-		resp, err := http.Get("https://jsonplaceholder.typicode.com/photos")
-		if err != nil {
-			http.Error(w, "Failed to fetch data", http.StatusInternalServerError)
-			log.Printf("Error: %v", err)
-			return
-		}
-		defer resp.Body.Close()
-
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			http.Error(w, "Failed to read response", http.StatusInternalServerError)
-			log.Printf("Error: %v", err)
-			return
-		}
-
-		var photos []Photo
-		if err := json.Unmarshal(body, &photos); err != nil {
-			http.Error(w, "Failed to parse JSON", http.StatusInternalServerError)
-			log.Printf("Error: %v", err)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(photos)
-	})
-
+	http.HandleFunc("/photos", getPhotosHandler)
 	loggedRouter := loggingMiddleware(http.DefaultServeMux)
 
 	log.Println("Server is running on port 3000...")
