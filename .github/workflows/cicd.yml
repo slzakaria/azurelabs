@@ -56,7 +56,7 @@ jobs:
         run: mkdir -p ./bin
 
       - name: Build
-        run: go build -v -o ./bin/myapp ./main.go
+        run: go build -v -o ./bin/goapi ./main.go
 
   docker-push:
     runs-on: ubuntu-latest
@@ -111,14 +111,13 @@ jobs:
           go-version: '1.23.0'
 
       - name: Build
-        working-directory: server
-        run: go build -v -o ./bin/myapp ./main.go
+        run: go build -v -o ./bin/goapi ./main.go
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         if: success()
         with:
-          files: ./server/bin/myapp
+          files: ./bin/goapi
         env:
           CICD_TOKEN: ${{ secrets.CICD_TOKEN }}
 
