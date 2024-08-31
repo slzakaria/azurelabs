@@ -2,8 +2,7 @@ name: Go CI/CD
 
 on:
   push:
-    branches:
-      - main
+    branches: ['main']
 
 jobs:
   lint:
