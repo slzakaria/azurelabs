@@ -135,4 +135,4 @@ jobs:
         with:
           files: ./bin/goapi
         env:
-          CICD_TOKEN: ${{ secrets.CICD_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
