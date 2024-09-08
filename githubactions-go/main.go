@@ -51,6 +51,7 @@ func getPhotosHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to fetch photos", http.StatusInternalServerError)
 		return
 	}
+
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		http.Error(w, "Failed to read response body", http.StatusInternalServerError)
@@ -58,6 +59,7 @@ func getPhotosHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+
 	if _, err := w.Write(body); err != nil {
 		http.Error(w, "Failed to write response", http.StatusInternalServerError)
 		return
@@ -69,6 +71,7 @@ func main() {
 	loggedRouter := loggingMiddleware(http.DefaultServeMux)
 
 	log.Println("Server is running on port 3000...")
+
 	if err := http.ListenAndServe(":3000", loggedRouter); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
