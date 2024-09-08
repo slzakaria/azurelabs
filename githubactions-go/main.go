@@ -66,13 +66,69 @@ func getPhotosHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getPostsHandler(w http.ResponseWriter, r *http.Request) {
+	resp, err := http.Get("https://jsonplaceholder.typicode.com/posts")
+	if err != nil {
+		http.Error(w, "Failed to fetch photos", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, "Failed to fetch photos", http.StatusInternalServerError)
+		return
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Failed to read response body", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	if _, err := w.Write(body); err != nil {
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+		return
+	}
+}
+
+func getUsersHandler(w http.ResponseWriter, r *http.Request) {
+	resp, err := http.Get("https://jsonplaceholder.typicode.com/users")
+	if err != nil {
+		http.Error(w, "Failed to fetch photos", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, "Failed to fetch photos", http.StatusInternalServerError)
+		return
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "Failed to read response body", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	if _, err := w.Write(body); err != nil {
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+		return
+	}
+}
+
 func main() {
 	http.HandleFunc("/photos", getPhotosHandler)
+	http.HandleFunc("/posts", getPostsHandler)
+	http.HandleFunc("/users", getUsersHandler)
 	loggedRouter := loggingMiddleware(http.DefaultServeMux)
 
-	log.Println("Server is running on port 3000...")
+	log.Println("Server is running on port 5000...")
 
-	if err := http.ListenAndServe(":3000", loggedRouter); err != nil {
+	if err := http.ListenAndServe(":5000", loggedRouter); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }
