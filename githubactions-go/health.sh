@@ -4,16 +4,17 @@ echo "Testing code ..."
 go test -v
 sleep 1
 
-echo "Testing endpoints on port 5000 ....."
+read -rp "Enter your ip: " IP
+echo "Testing endpoints on port $IP ....."
 sleep 1
 
-curl http://13.53.35.206:5000/photos
+curl http://$IP:5000/photos
 sleep 1
 
-curl http://13.53.35.206:5000/users
+curl http://$IP:5000/users
 sleep 1
 
-curl http://13.53.35.206:5000/posts
+curl http://$IP:5000/posts
 sleep 1
 
 echo -e "\nAll endpoints tested"
